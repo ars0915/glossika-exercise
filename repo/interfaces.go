@@ -1,6 +1,9 @@
 package repo
 
 import (
+	"context"
+	"time"
+
 	"github.com/ars0915/glossika-exercise/entity"
 )
 
@@ -27,9 +30,13 @@ type (
 		UpdateUser(id uint, t entity.User) error
 		GetUser(email string) (User entity.User, err error)
 		GetUserForUpdate(email string) (user entity.User, err error)
+
+		RecommendProduct() ([]entity.Product, error)
 	}
 
 	Redis interface {
+		Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
+		Get(ctx context.Context, key string) (interface{}, error)
 	}
 
 	Email interface {

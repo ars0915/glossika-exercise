@@ -91,6 +91,11 @@ func init() {
 			return err
 		}
 		redis := repoRedis.New(pkgRedis)
+		defer func() {
+			if err := pkgRedis.Close(); err != nil {
+				logrus.WithError(err).Error("close redis client error")
+			}
+		}()
 
 		e := email.NewEmailClient()
 

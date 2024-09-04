@@ -38,12 +38,14 @@ func WithTask(i Task) func(h *AppHandler) {
 type UserHandler struct {
 	db    repo.App
 	email repo.Email
+	redis repo.Redis
 }
 
-func NewUserHandler(db repo.App, email repo.Email) *UserHandler {
+func NewUserHandler(db repo.App, redis repo.Redis, email repo.Email) *UserHandler {
 	return &UserHandler{
 		db:    db,
 		email: email,
+		redis: redis,
 	}
 }
 

@@ -13,3 +13,7 @@ func New(client *redis.ClusterClient) *RedisRepo {
 		client: client,
 	}
 }
+
+func (r RedisRepo) Close() error {
+	return r.client.Close()
+}

@@ -83,3 +83,20 @@ func (rH *HttpHandler) loginHandler(c *gin.Context) {
 	}
 	ctx.Response(http.StatusOK, token)
 }
+
+func (rH *HttpHandler) getRecommendHandler(c *gin.Context) {
+	ctx := cGin.NewContext(c)
+
+	userID := ctx.GetUint("userID")
+	if userID == uint(0) {
+		ctx.Response(http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	products, err := rH.h.GetRecommendProducts(ctx, userID)
+	if err != nil {
+		ctx.WithError(err).Response(http.StatusInternalServerError, "GetRecommendProducts Failed")
+		return
+	}
+	ctx.WithData(products).Response(http.StatusOK, "")
+}

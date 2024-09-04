@@ -2,11 +2,14 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
+	"github.com/ars0915/glossika-exercise/constant"
 	"github.com/ars0915/glossika-exercise/entity"
 	"github.com/ars0915/glossika-exercise/repo"
 	"github.com/ars0915/glossika-exercise/util"
@@ -112,4 +115,26 @@ func (h UserHandler) Login(ctx context.Context, param LoginParam) (token string,
 	}
 
 	return token, nil
+}
+
+func (h UserHandler) GetRecommendProducts(ctx context.Context, userID uint) ([]entity.Product, error) {
+	cacheKey := fmt.Sprintf("%s%d", constant.CacheKeyPrefixRecommend, userID)
+	products, err := h.redis.Get(ctx, cacheKey)
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			// get from DB
+			products, err = h.db.RecommendProduct()
+			if err != nil {
+				return nil, errors.Wrap(err, "db.RecommendProduct")
+			}
+
+			if err = h.redis.Set(ctx, cacheKey, products, constant.CacheRecommendProductTTL); err != nil {
+				return nil, err
+			}
+
+			return products.([]entity.Product), nil
+		}
+	}
+
+	return products.([]entity.Product), nil
 }

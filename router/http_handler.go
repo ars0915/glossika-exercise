@@ -18,5 +18,6 @@ func (h HttpHandler) getRouter() (routes []appRouter) {
 		{http.MethodPost, "/register", false, h.registerHandler},
 		{http.MethodPost, "/verify", false, h.verifyUserHandler},
 		{http.MethodPost, "/login", false, h.loginHandler},
+		{http.MethodGet, "/recommendation", true, h.getRecommendHandler},
 	}
 }
