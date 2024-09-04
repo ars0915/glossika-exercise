@@ -122,7 +122,7 @@ func LoadConf(confPath string) (ConfENV, error) {
 	conf.Redis.Hosts = viper.GetString("redis_hosts")
 
 	conf.JWT.Secret = viper.GetString("jwt_secret")
-	conf.JWT.ExpireDuration = viper.GetDuration("jwt_expire")
+	conf.JWT.ExpireDuration = viper.GetDuration("jwt_expire_duration")
 
 	return conf, nil
 }

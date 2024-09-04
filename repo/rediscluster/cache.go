@@ -14,6 +14,6 @@ func (r RedisRepo) Set(ctx context.Context, key string, value interface{}, expir
 	return nil
 }
 
-func (r RedisRepo) Get(ctx context.Context, key string) (interface{}, error) {
+func (r RedisRepo) Get(ctx context.Context, key string) (string, error) {
 	return r.client.Get(ctx, key).Result()
 }

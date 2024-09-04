@@ -15,11 +15,11 @@ func (s *AppRepo) CreateUser(t entity.User) (entity.User, error) {
 }
 
 func (s *AppRepo) UpdateUser(id uint, t entity.User) error {
-	return s.db.Model(entity.User{}).Where(`"id" = ?`, id).Updates(t).Error
+	return s.db.Model(entity.User{}).Where(`id = ?`, id).Updates(t).Error
 }
 
 func (s *AppRepo) GetUser(email string) (User entity.User, err error) {
-	if err = s.db.Where(`"email" = ?`, email).First(&User).Error; err != nil {
+	if err = s.db.Where(`email = ?`, email).First(&User).Error; err != nil {
 		return User, err
 	}
 	return

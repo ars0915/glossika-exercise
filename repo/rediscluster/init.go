@@ -5,10 +5,10 @@ import (
 )
 
 type RedisRepo struct {
-	client *redis.ClusterClient
+	client *redis.Client
 }
 
-func New(client *redis.ClusterClient) *RedisRepo {
+func New(client *redis.Client) *RedisRepo {
 	return &RedisRepo{
 		client: client,
 	}

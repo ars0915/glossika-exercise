@@ -26,13 +26,13 @@ func GenerateJWT(userID uint) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(config.Conf.JWT.Secret)
+	return token.SignedString([]byte(config.Conf.JWT.Secret))
 }
 
 func ParseToken(tokenStr string) (*jwt.Token, *Claims, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return config.Conf.JWT.Secret, nil
+		return []byte(config.Conf.JWT.Secret), nil
 	})
 	return token, claims, err
 }

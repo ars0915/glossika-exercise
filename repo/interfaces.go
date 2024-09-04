@@ -36,7 +36,7 @@ type (
 
 	Redis interface {
 		Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
-		Get(ctx context.Context, key string) (interface{}, error)
+		Get(ctx context.Context, key string) (string, error)
 	}
 
 	Email interface {

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/go-redis/redis/v8"
@@ -42,7 +43,7 @@ func (h UserHandler) Register(ctx context.Context, param RegisterParam) error {
 			VerificationCode: cTypes.String(verificationCode),
 		})
 		if err != nil {
-			if errors.Is(err, gorm.ErrDuplicatedKey) {
+			if IsDuplicateError(err) {
 				return ErrorEmailRegistered
 			}
 			return errors.Wrap(err, "CreateUser")
@@ -119,22 +120,32 @@ func (h UserHandler) Login(ctx context.Context, param LoginParam) (token string,
 
 func (h UserHandler) GetRecommendProducts(ctx context.Context, userID uint) ([]entity.Product, error) {
 	cacheKey := fmt.Sprintf("%s%d", constant.CacheKeyPrefixRecommend, userID)
-	products, err := h.redis.Get(ctx, cacheKey)
+	productCached, err := h.redis.Get(ctx, cacheKey)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			// get from DB
-			products, err = h.db.RecommendProduct()
+			products, err := h.db.RecommendProduct()
 			if err != nil {
 				return nil, errors.Wrap(err, "db.RecommendProduct")
 			}
 
-			if err = h.redis.Set(ctx, cacheKey, products, constant.CacheRecommendProductTTL); err != nil {
+			value, err := json.Marshal(products)
+			if err != nil {
+				return nil, errors.Wrap(err, "json.Marshal")
+			}
+
+			if err = h.redis.Set(ctx, cacheKey, value, constant.CacheRecommendProductTTL); err != nil {
 				return nil, err
 			}
 
-			return products.([]entity.Product), nil
+			return products, nil
 		}
 	}
 
-	return products.([]entity.Product), nil
+	var result []entity.Product
+	if err = json.Unmarshal([]byte(productCached), &result); err != nil {
+		return nil, errors.Wrap(err, "json.Unmarshal")
+	}
+
+	return result, nil
 }

@@ -1,14 +1,35 @@
 package cGin
 
 import (
-	"regexp"
+	"unicode"
 
 	"github.com/go-playground/validator/v10"
 )
 
-var passwordRegex = regexp.MustCompile(`^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,16}$`)
-
 func ValidatePassword(fl validator.FieldLevel) bool {
 	password := fl.Field().String()
-	return passwordRegex.MatchString(password)
+
+	if len(password) < 6 || len(password) > 16 {
+		return false
+	}
+
+	hasLower := false
+	hasUpper := false
+	hasDigit := false
+	hasSpecial := false
+
+	for _, char := range password {
+		switch {
+		case unicode.IsLower(char):
+			hasLower = true
+		case unicode.IsUpper(char):
+			hasUpper = true
+		case unicode.IsDigit(char):
+			hasDigit = true
+		case !unicode.IsLetter(char) && !unicode.IsDigit(char):
+			hasSpecial = true
+		}
+	}
+
+	return hasLower && hasUpper && hasDigit && hasSpecial
 }

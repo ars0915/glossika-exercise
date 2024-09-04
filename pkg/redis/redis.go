@@ -1,8 +1,7 @@
-package rediscluster
+package redis
 
 import (
 	"context"
-	"strings"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
@@ -10,9 +9,9 @@ import (
 	"github.com/ars0915/glossika-exercise/config"
 )
 
-func NewRedisClient(config config.ConfENV) (*redis.ClusterClient, error) {
-	redisClient := redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs: strings.Split(config.Redis.Hosts, ","),
+func NewRedisClient(config config.ConfENV) (*redis.Client, error) {
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: config.Redis.Hosts,
 	})
 
 	if err := redisClient.Ping(context.Background()).Err(); err != nil {

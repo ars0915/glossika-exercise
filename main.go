@@ -11,7 +11,7 @@ import (
 
 	"github.com/ars0915/glossika-exercise/config"
 	"github.com/ars0915/glossika-exercise/pkg/db"
-	"github.com/ars0915/glossika-exercise/pkg/rediscluster"
+	"github.com/ars0915/glossika-exercise/pkg/redis"
 	repoDB "github.com/ars0915/glossika-exercise/repo/db"
 	"github.com/ars0915/glossika-exercise/repo/email"
 	repoRedis "github.com/ars0915/glossika-exercise/repo/rediscluster"
@@ -86,11 +86,11 @@ func init() {
 		db := repoDB.New(pkgDB)
 		db.Migrate()
 
-		pkgRedis, err := rediscluster.NewRedisClient(config.Conf)
+		pkgRedis, err := redis.NewRedisClient(config.Conf)
 		if err != nil {
 			return err
 		}
-		redis := repoRedis.New(pkgRedis)
+		r := repoRedis.New(pkgRedis)
 		defer func() {
 			if err := pkgRedis.Close(); err != nil {
 				logrus.WithError(err).Error("close redis client error")
@@ -99,7 +99,7 @@ func init() {
 
 		e := email.NewEmailClient()
 
-		uHandler := usecase.InitHandler(db, redis, e)
+		uHandler := usecase.InitHandler(db, r, e)
 
 		service := router.NewHandler(config.Conf, uHandler)
 

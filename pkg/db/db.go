@@ -12,12 +12,12 @@ import (
 )
 
 func NewDB(config config.ConfENV) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
-		config.DB.Host,
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.DB.Username,
 		config.DB.Password,
-		config.DB.Database,
+		config.DB.Host,
 		config.DB.Port,
+		config.DB.Database,
 	)
 	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
