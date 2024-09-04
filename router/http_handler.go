@@ -21,5 +21,6 @@ func (h HttpHandler) getRouter() (routes []appRouter) {
 
 		{http.MethodPost, "/register", h.registerHandler},
 		{http.MethodPost, "/verify", h.verifyUserHandler},
+		{http.MethodPost, "/login", h.loginHandler},
 	}
 }

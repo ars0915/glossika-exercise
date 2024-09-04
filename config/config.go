@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -24,6 +25,7 @@ type ConfENV struct {
 	Log   SectionLog
 	DB    SectionDB
 	Redis SectionRedis
+	JWT   SectionJWT
 }
 
 type SectionCore struct {
@@ -45,6 +47,11 @@ type SectionDB struct {
 	Password     string
 	MaxIdleConns int
 	MaxOpenConns int
+}
+
+type SectionJWT struct {
+	Secret         string
+	ExpireDuration time.Duration
 }
 
 type SectionRedis struct {
@@ -113,6 +120,9 @@ func LoadConf(confPath string) (ConfENV, error) {
 	conf.DB.MaxOpenConns = viper.GetInt("db_max_open_conns")
 
 	conf.Redis.Hosts = viper.GetString("redis_hosts")
+
+	conf.JWT.Secret = viper.GetString("jwt_secret")
+	conf.JWT.ExpireDuration = viper.GetDuration("jwt_expire")
 
 	return conf, nil
 }

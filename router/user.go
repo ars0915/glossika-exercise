@@ -58,3 +58,28 @@ func (rH *HttpHandler) verifyUserHandler(c *gin.Context) {
 
 	ctx.Response(http.StatusOK, "")
 }
+
+type loginBody struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,password"`
+}
+
+func (rH *HttpHandler) loginHandler(c *gin.Context) {
+	ctx := cGin.NewContext(c)
+
+	var body loginBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.WithError(err).Response(http.StatusBadRequest, "Invalid Json")
+		return
+	}
+
+	token, err := rH.h.Login(ctx, usecase.LoginParam{
+		Email:    body.Email,
+		Password: body.Password,
+	})
+	if err != nil {
+		ctx.WithError(err).Response(http.StatusInternalServerError, "Login Failed")
+		return
+	}
+	ctx.Response(http.StatusOK, token)
+}

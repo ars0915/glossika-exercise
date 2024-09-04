@@ -1,6 +1,6 @@
 package constant
 
 const (
-	ServiceName        = "go-template"
+	ServiceName        = "glossika-exercise"
 	ResponseCodePrefix = 1
 )

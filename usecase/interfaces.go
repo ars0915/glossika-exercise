@@ -26,5 +26,6 @@ type (
 	User interface {
 		Register(ctx context.Context, param RegisterParam) error
 		Verify(ctx context.Context, param VerifyUserParam) error
+		Login(ctx context.Context, param LoginParam) (token string, err error)
 	}
 )

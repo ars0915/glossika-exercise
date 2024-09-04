@@ -27,7 +27,19 @@ var (
 
 	ErrorUserVerificationFailed = cGin.CustomError{
 		Code:     1004,
-		HTTPCode: http.StatusBadRequest,
+		HTTPCode: http.StatusUnauthorized,
 		Message:  "User verification failed",
+	}
+
+	ErrorPasswordVerificationFailed = cGin.CustomError{
+		Code:     1005,
+		HTTPCode: http.StatusUnauthorized,
+		Message:  "Password verification failed",
+	}
+
+	ErrorUserUnverified = cGin.CustomError{
+		Code:     1006,
+		HTTPCode: http.StatusForbidden,
+		Message:  "User unverified",
 	}
 )

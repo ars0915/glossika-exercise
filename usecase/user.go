@@ -82,3 +82,33 @@ func (h UserHandler) Verify(ctx context.Context, param VerifyUserParam) error {
 		return nil
 	})
 }
+
+type LoginParam struct {
+	Email    string
+	Password string
+}
+
+func (h UserHandler) Login(ctx context.Context, param LoginParam) (token string, err error) {
+	user, err := h.db.GetUser(param.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return "", ErrorUserNotFound
+		}
+		return "", errors.Wrap(err, "GetUser")
+	}
+
+	if !*user.EmailVerified {
+		return "", ErrorUserUnverified
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(param.Password)); err != nil {
+		return "", ErrorPasswordVerificationFailed
+	}
+
+	token, err = GenerateJWT(user.ID)
+	if err != nil {
+		return "", errors.Wrap(err, "GenerateJWT")
+	}
+
+	return token, nil
+}
