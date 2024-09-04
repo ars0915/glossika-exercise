@@ -9,10 +9,10 @@ import (
 
 type User struct {
 	ID               uint           `json:"id" gorm:"primary_key"`
-	Email            string         `json:"email" gorm:"type:varchar(255);not null;unique"`
-	Password         string         `json:"password" gorm:"type:varchar(60);not null"`
-	EmailVerified    bool           `json:"emailVerified" gorm:"type:boolean;default:false"`
-	VerificationCode string         `json:"verificationCode" gorm:"type:varchar(6);not null"`
+	Email            *string        `json:"email" gorm:"type:varchar(255);not null;unique"`
+	Password         *string        `json:"password" gorm:"type:varchar(60);not null"`
+	EmailVerified    *bool          `json:"emailVerified" gorm:"type:boolean;default:false"`
+	VerificationCode *string        `json:"verificationCode" gorm:"type:varchar(6);not null"`
 	CreatedAt        time.Time      `json:"-"`
 	UpdatedAt        time.Time      `json:"-"`
 	DeletedAt        gorm.DeletedAt `json:"-"`

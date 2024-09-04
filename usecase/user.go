@@ -9,6 +9,7 @@ import (
 
 	"github.com/ars0915/glossika-exercise/entity"
 	"github.com/ars0915/glossika-exercise/repo"
+	"github.com/ars0915/glossika-exercise/util/cTypes"
 )
 
 type RegisterParam struct {
@@ -31,10 +32,10 @@ func (h UserHandler) Register(ctx context.Context, param RegisterParam) error {
 		tx := repo.ExtractTx(txCtx)
 
 		user, err := tx.CreateUser(entity.User{
-			Email:            param.Email,
-			Password:         string(hashedPassword),
-			EmailVerified:    false,
-			VerificationCode: verificationCode,
+			Email:            cTypes.String(param.Email),
+			Password:         cTypes.String(string(hashedPassword)),
+			EmailVerified:    cTypes.Bool(false),
+			VerificationCode: cTypes.String(verificationCode),
 		})
 		if err != nil {
 			if errors.Is(err, gorm.ErrDuplicatedKey) {
@@ -43,7 +44,7 @@ func (h UserHandler) Register(ctx context.Context, param RegisterParam) error {
 			return errors.Wrap(err, "CreateUser")
 		}
 
-		if err = h.email.SendVerificationEmail(user.Email, user.VerificationCode); err != nil {
+		if err = h.email.SendVerificationEmail(*user.Email, *user.VerificationCode); err != nil {
 			return errors.Wrap(err, "SendVerificationEmail")
 		}
 
