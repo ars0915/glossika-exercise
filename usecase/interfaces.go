@@ -25,5 +25,6 @@ type (
 
 	User interface {
 		Register(ctx context.Context, param RegisterParam) error
+		Verify(ctx context.Context, param VerifyUserParam) error
 	}
 )

@@ -51,3 +51,34 @@ func (h UserHandler) Register(ctx context.Context, param RegisterParam) error {
 		return nil
 	})
 }
+
+type VerifyUserParam struct {
+	Email            string
+	VerificationCode string
+}
+
+func (h UserHandler) Verify(ctx context.Context, param VerifyUserParam) error {
+	return repo.WithinTransaction(ctx, h.db, func(txCtx context.Context) error {
+		tx := repo.ExtractTx(txCtx)
+
+		user, err := tx.GetUserForUpdate(param.Email)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrorUserNotFound
+			}
+			return errors.Wrap(err, "GetUserForUpdate")
+		}
+
+		if *user.VerificationCode != param.VerificationCode {
+			return ErrorUserVerificationFailed
+		}
+
+		if err = tx.UpdateUser(user.ID, entity.User{
+			EmailVerified: cTypes.Bool(true),
+		}); err != nil {
+			return errors.Wrap(err, "UpdateUser")
+		}
+
+		return nil
+	})
+}

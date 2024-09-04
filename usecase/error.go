@@ -18,4 +18,16 @@ var (
 		HTTPCode: http.StatusConflict,
 		Message:  "Email registered",
 	}
+
+	ErrorUserNotFound = cGin.CustomError{
+		Code:     1003,
+		HTTPCode: http.StatusNotFound,
+		Message:  "User not found",
+	}
+
+	ErrorUserVerificationFailed = cGin.CustomError{
+		Code:     1004,
+		HTTPCode: http.StatusBadRequest,
+		Message:  "User verification failed",
+	}
 )

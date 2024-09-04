@@ -33,3 +33,28 @@ func (rH *HttpHandler) registerHandler(c *gin.Context) {
 
 	ctx.Response(http.StatusOK, "")
 }
+
+type verifyUserBody struct {
+	Email            string `json:"email" binding:"required,email"`
+	VerificationCode string `json:"verificationCode" binding:"required,len=6"`
+}
+
+func (rH *HttpHandler) verifyUserHandler(c *gin.Context) {
+	ctx := cGin.NewContext(c)
+
+	var body verifyUserBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.WithError(err).Response(http.StatusBadRequest, "Invalid Json")
+		return
+	}
+
+	if err := rH.h.Verify(ctx, usecase.VerifyUserParam{
+		Email:            body.Email,
+		VerificationCode: body.VerificationCode,
+	}); err != nil {
+		ctx.WithError(err).Response(http.StatusInternalServerError, "Verify Failed")
+		return
+	}
+
+	ctx.Response(http.StatusOK, "")
+}
