@@ -40,13 +40,15 @@ type SectionLog struct {
 }
 
 type SectionDB struct {
-	Host         string
-	Port         string
-	Database     string
-	Username     string
-	Password     string
-	MaxIdleConns int
-	MaxOpenConns int
+	Host               string
+	Port               string
+	Database           string
+	Username           string
+	Password           string
+	MaxIdleConns       int
+	MaxOpenConns       int
+	MaxConnectionRetry int
+	RetryDelay         time.Duration
 }
 
 type SectionJWT struct {
@@ -118,6 +120,8 @@ func LoadConf(confPath string) (ConfENV, error) {
 	conf.DB.Database = viper.GetString("db_database")
 	conf.DB.MaxIdleConns = viper.GetInt("db_max_idle_conns")
 	conf.DB.MaxOpenConns = viper.GetInt("db_max_open_conns")
+	conf.DB.MaxConnectionRetry = viper.GetInt("db_max_connection_retry")
+	conf.DB.RetryDelay = viper.GetDuration("db_retry_delay")
 
 	conf.Redis.Hosts = viper.GetString("redis_hosts")
 
