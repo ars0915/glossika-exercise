@@ -119,15 +119,15 @@ func (h HttpHandler) routerEngine() *gin.Engine {
 		})
 	})
 
-	// app
 	routers := h.getRouter()
-	for i := range routers {
-		r.Handle(
-			routers[i].method,
-			routers[i].endpoint,
-			resourceCheck(h).GinFunc(),
-			routers[i].worker,
-		)
+	for _, route := range routers {
+		handlerFuncs := []gin.HandlerFunc{}
+		if route.requireAuth {
+			handlerFuncs = append(handlerFuncs, jwtCheck(h).GinFunc())
+		}
+		handlerFuncs = append(handlerFuncs, route.worker)
+
+		r.Handle(route.method, route.endpoint, handlerFuncs...)
 	}
 
 	return r

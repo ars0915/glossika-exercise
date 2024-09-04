@@ -9,6 +9,7 @@ import (
 
 	"github.com/ars0915/glossika-exercise/entity"
 	"github.com/ars0915/glossika-exercise/repo"
+	"github.com/ars0915/glossika-exercise/util"
 	"github.com/ars0915/glossika-exercise/util/cTypes"
 )
 
@@ -105,7 +106,7 @@ func (h UserHandler) Login(ctx context.Context, param LoginParam) (token string,
 		return "", ErrorPasswordVerificationFailed
 	}
 
-	token, err = GenerateJWT(user.ID)
+	token, err = util.GenerateJWT(user.ID)
 	if err != nil {
 		return "", errors.Wrap(err, "GenerateJWT")
 	}

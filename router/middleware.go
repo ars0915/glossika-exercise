@@ -2,28 +2,32 @@ package router
 
 import (
 	"net/http"
-	"strconv"
+	"strings"
 
+	"github.com/gin-gonic/gin"
+
+	"github.com/ars0915/glossika-exercise/util"
 	"github.com/ars0915/glossika-exercise/util/cGin"
 )
 
-func resourceCheck(rH HttpHandler) cGin.HandlerFunc {
-	return func(ctx *cGin.Context) {
-		taskIDStr := ctx.Param("taskID")
-
-		if len(taskIDStr) > 0 {
-			taskID, err := strconv.Atoi(taskIDStr)
-			if err != nil {
-				ctx.WithError(err).Response(http.StatusBadRequest, "Invalid ID")
-				return
-			}
-
-			if _, err = rH.Usecase().GetTask(ctx, uint(taskID)); err != nil {
-				ctx.WithError(err).Response(http.StatusInternalServerError, "Check Task failed")
-				return
-			}
+func jwtCheck(rH HttpHandler) cGin.HandlerFunc {
+	return func(c *cGin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			c.Abort()
+			return
 		}
 
-		ctx.Next()
+		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+		token, claims, err := util.ParseToken(tokenStr)
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		c.Set("userID", claims.UserID)
+		c.Next()
 	}
 }
