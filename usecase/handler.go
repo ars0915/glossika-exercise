@@ -6,6 +6,7 @@ import (
 
 type AppHandler struct {
 	Task
+	User
 }
 
 type NewHandlerOption func(*AppHandler)
@@ -32,4 +33,20 @@ func NewTaskHandler(db repo.App) *TaskHandler {
 
 func WithTask(i Task) func(h *AppHandler) {
 	return func(h *AppHandler) { h.Task = i }
+}
+
+type UserHandler struct {
+	db    repo.App
+	email repo.Email
+}
+
+func NewUserHandler(db repo.App, email repo.Email) *UserHandler {
+	return &UserHandler{
+		db:    db,
+		email: email,
+	}
+}
+
+func WithUser(i User) func(h *AppHandler) {
+	return func(h *AppHandler) { h.User = i }
 }

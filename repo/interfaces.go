@@ -22,8 +22,17 @@ type (
 		CreateTask(t entity.Task) (entity.Task, error)
 		UpdateTask(id uint, t entity.Task) error
 		DeleteTask(id uint) (err error)
+
+		CreateUser(t entity.User) (entity.User, error)
+		UpdateUser(id uint, t entity.User) error
+		GetUser(email string) (User entity.User, err error)
+		GetUserForUpdate(email string) (user entity.User, err error)
 	}
 
 	Redis interface {
+	}
+
+	Email interface {
+		SendVerificationEmail(email, verificationCode string) error
 	}
 )

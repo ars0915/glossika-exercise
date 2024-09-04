@@ -13,6 +13,7 @@ import (
 	"github.com/ars0915/glossika-exercise/pkg/db"
 	"github.com/ars0915/glossika-exercise/pkg/rediscluster"
 	repoDB "github.com/ars0915/glossika-exercise/repo/db"
+	"github.com/ars0915/glossika-exercise/repo/email"
 	repoRedis "github.com/ars0915/glossika-exercise/repo/rediscluster"
 	"github.com/ars0915/glossika-exercise/router"
 	"github.com/ars0915/glossika-exercise/usecase"
@@ -91,7 +92,9 @@ func init() {
 		}
 		redis := repoRedis.New(pkgRedis)
 
-		uHandler := usecase.InitHandler(db, redis)
+		e := email.NewEmailClient()
+
+		uHandler := usecase.InitHandler(db, redis, e)
 
 		service := router.NewHandler(config.Conf, uHandler)
 

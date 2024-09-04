@@ -10,6 +10,7 @@ import (
 type (
 	Handler interface {
 		Task
+		User
 	}
 )
 
@@ -20,5 +21,9 @@ type (
 		CreateTask(ctx context.Context, t entity.Task) (entity.Task, error)
 		UpdateTask(ctx context.Context, id uint, t entity.Task) (entity.Task, error)
 		DeleteTask(ctx context.Context, id uint) error
+	}
+
+	User interface {
+		Register(ctx context.Context, param RegisterParam) error
 	}
 )

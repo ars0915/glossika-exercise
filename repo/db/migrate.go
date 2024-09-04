@@ -27,7 +27,7 @@ func (s *AppRepo) Migrate() {
 
 	m.InitSchema(func(tx *gorm.DB) error {
 		logrus.Info("Create Tables...")
-		if err := s.db.AutoMigrate(&entity.Task{}); err != nil {
+		if err := s.db.AutoMigrate(&entity.User{}); err != nil {
 			return err
 		}
 		return nil

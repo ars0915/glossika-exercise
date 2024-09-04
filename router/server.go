@@ -8,6 +8,8 @@ import (
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
@@ -24,6 +26,12 @@ func (rH Handler) RunServer(ctx context.Context) (err error) {
 		}
 		errCh = make(chan error)
 	)
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		if err := v.RegisterValidation("password", cGin.ValidatePassword); err != nil {
+			errCh <- errors.Wrap(err, "register validation")
+		}
+	}
 
 	// http server
 	go func() {
