@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/ars0915/gogolook-exercise/entity"
-	"github.com/ars0915/gogolook-exercise/util/cGin"
+	"github.com/ars0915/glossika-exercise/entity"
+	"github.com/ars0915/glossika-exercise/util/cGin"
 )
 
 func (rH *HttpHandler) ListTasksHandler(c *gin.Context) {

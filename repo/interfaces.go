@@ -1,12 +1,10 @@
 package repo
 
 import (
-	"context"
-
-	"github.com/ars0915/gogolook-exercise/entity"
+	"github.com/ars0915/glossika-exercise/entity"
 )
 
-//go:generate mockgen -destination=../mocks/repo/app_repo.go -package=mocks github.com/ars0915/gogolook-exercise/repo App
+//go:generate mockgen -destination=../mocks/repo/app_repo.go -package=mocks github.com/ars0915/glossika-exercise/repo App
 
 type (
 	App interface {
@@ -25,19 +23,7 @@ type (
 		UpdateTask(id uint, t entity.Task) error
 		DeleteTask(id uint) (err error)
 	}
-)
 
-type txKey struct{}
-
-// injectTx injects transaction to context
-func InjectTx(ctx context.Context, tx App) context.Context {
-	return context.WithValue(ctx, txKey{}, tx)
-}
-
-// extractTx extracts transaction from context
-func ExtractTx(ctx context.Context) App {
-	if tx, ok := ctx.Value(txKey{}).(App); ok {
-		return tx
+	Redis interface {
 	}
-	return nil
-}
+)

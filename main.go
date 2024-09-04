@@ -9,12 +9,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
-	"github.com/ars0915/gogolook-exercise/config"
-	"github.com/ars0915/gogolook-exercise/pkg/db"
-	repoDB "github.com/ars0915/gogolook-exercise/repo/db"
-	"github.com/ars0915/gogolook-exercise/router"
-	"github.com/ars0915/gogolook-exercise/usecase"
-	"github.com/ars0915/gogolook-exercise/util/log"
+	"github.com/ars0915/glossika-exercise/config"
+	"github.com/ars0915/glossika-exercise/pkg/db"
+	"github.com/ars0915/glossika-exercise/pkg/rediscluster"
+	repoDB "github.com/ars0915/glossika-exercise/repo/db"
+	repoRedis "github.com/ars0915/glossika-exercise/repo/rediscluster"
+	"github.com/ars0915/glossika-exercise/router"
+	"github.com/ars0915/glossika-exercise/usecase"
+	"github.com/ars0915/glossika-exercise/util/log"
 )
 
 var (
@@ -32,7 +34,7 @@ var (
 func init() {
 	// Initialise a CLI app
 	app = cli.NewApp()
-	app.Name = "gogolook-exercise"
+	app.Name = "glossika-exercise"
 	app.Usage = "The RESTful service that provider web api"
 	app.Flags = []cli.Flag{
 		cli.IntFlag{
@@ -70,7 +72,7 @@ func init() {
 
 		logrus.WithFields(logrus.Fields{
 			"logLevel": logrus.GetLevel(),
-		}).Info("gogolook-exercise starting")
+		}).Info("glossika-exercise starting")
 
 		log.SetLogLevel(config.Conf.Log.Level)
 
@@ -83,7 +85,13 @@ func init() {
 		db := repoDB.New(pkgDB)
 		db.Migrate()
 
-		uHandler := usecase.InitHandler(db)
+		pkgRedis, err := rediscluster.NewRedisClient(config.Conf)
+		if err != nil {
+			return err
+		}
+		redis := repoRedis.New(pkgRedis)
+
+		uHandler := usecase.InitHandler(db, redis)
 
 		service := router.NewHandler(config.Conf, uHandler)
 

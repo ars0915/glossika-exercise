@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ars0915/gogolook-exercise/util/cGin"
+	"github.com/ars0915/glossika-exercise/util/cGin"
 )
 
 func resourceCheck(rH HttpHandler) cGin.HandlerFunc {
